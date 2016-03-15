@@ -2,7 +2,7 @@
 	"name": "selectize",
 	"license": "MIT",
 	"tags": [],
-	"description": "A wrapper for js-selectize",
+	"description": "A wrapper for selectize.js",
 	"contributors": [
     "epidevJosh"
   ],

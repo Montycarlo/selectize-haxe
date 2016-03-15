@@ -1,1 +1,2 @@
-# selectize-haxe
+# Selectize-haxe
+A Haxe wrapper for Selectize.js for React!
