@@ -1,0 +1,17 @@
+{
+	"name": "selectize",
+	"license": "MIT",
+	"tags": [],
+	"description": "A wrapper for js-selectize",
+	"contributors": [
+    "epidevJosh"
+  ],
+	"releasenote": "See https://github.com/Montycarlo/selectize-haxe.git",
+	"version": "0.0.1",
+	"url": "https://github.com/Montycarlo/selectize-haxe.git",
+	"classPath": "src/lib",
+	"dependencies": {
+		"jQueryExtern" : "2.0.5",
+		"react" : "*"
+	}
+}
