@@ -3,18 +3,26 @@ package epidev;
 import api.react.ReactComponent.ReactComponentOfPropsAndState;
 import api.react.ReactMacro.jsx;
 import jQuery.*;
+using Lambda;
 
-class SelectizeOption{
+
+interface ISelectizeOption{
+	function selectize():SelectizeOption;
+}
+
+class SelectizeOption implements ISelectizeOption{
 	public var name:String;
 	public var val:String;
 	public function new(n:String, v:String){
 		this.name = n;
 		this.val = v;
 	}
+	public function selectize() return this;
 }
 
 typedef SelectizeProps = {
-	ops:Array<SelectizeOption>,
+	var ops:Array<ISelectizeOption>;
+	@optional var create:Bool;
 };
 typedef SelectizeState = {};
 
@@ -30,11 +38,12 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 	}
 
 	private function createChildren(){
-		return [for(o in props.ops) jsx('<option key={o.val} value={o.val}>{o.name}</option>')];
+		var ops = props.ops.map(function(x) return x.selectize());
+		return [for(o in ops) jsx('<option key={o.val} value={o.val}>{o.name}</option>')];
 	}
 
 	override public function componentDidMount(){
-		untyped new JQuery("#sel").selectize({create:true});
+		untyped new JQuery("#sel").selectize({create:props.create});
 	}
 
 }
