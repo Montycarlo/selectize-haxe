@@ -10,6 +10,7 @@ interface ISelectizeOption{
 	function selectize():SelectizeOption;
 }
 
+@final
 class SelectizeOption implements ISelectizeOption{
 	public var name:String;
 	public var val:String;
@@ -22,7 +23,9 @@ class SelectizeOption implements ISelectizeOption{
 
 typedef SelectizeProps = {
 	var ops:Array<ISelectizeOption>;
+	@optional var startEmpty:Bool;
 	@optional var create:Bool;
+	@optional var placeholder:String;
 };
 typedef SelectizeState = {};
 
@@ -31,7 +34,7 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 
 	override public function render(){
 		return jsx('
-		<select id="sel">
+		<select id="sel" placeholder=${props.placeholder} defaultValue="">
 			${createChildren()}
 		</select>
 		');
@@ -39,11 +42,19 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 
 	private function createChildren(){
 		var ops = props.ops.map(function(x) return x.selectize());
-		return [for(o in ops) jsx('<option key={o.val} value={o.val}>{o.name}</option>')];
+		if(props.startEmpty == true || props.placeholder != null) 
+			ops.unshift(new SelectizeOption('',''));
+
+		return [
+			for(o in ops) 
+				jsx('<option key=${o.val} value=${o.val}>${o.name}</option>')
+		];
 	}
 
 	override public function componentDidMount(){
-		untyped new JQuery("#sel").selectize({create:props.create});
+		untyped new JQuery("#sel").selectize({
+			create:props.create
+		});
 	}
 
 }
