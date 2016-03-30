@@ -26,6 +26,7 @@ typedef SelectizeProps = {
 	@optional var startEmpty:Bool;
 	@optional var create:Bool;
 	@optional var placeholder:String;
+	@optional var label:String;
 };
 typedef SelectizeState = {};
 
@@ -33,10 +34,14 @@ typedef SelectizeState = {};
 class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeState>{
 
 	override public function render(){
+		var label = props.label != null ? jsx('<label className="control-label">${props.label}</label>') : null;
 		return jsx('
-		<select id="sel" placeholder=${props.placeholder} defaultValue="">
-			${createChildren()}
-		</select>
+		<div>
+			${label}
+			<select id="sel" placeholder=${props.placeholder} defaultValue="">
+				${createChildren()}
+			</select>
+		</div>
 		');
 	}
 
