@@ -22,7 +22,44 @@ class Webapp extends ReactComponent{
 }
 ```
 Classes which implement the ISelectizeOption interface can be directly passed into the `ops` list, instead
-of creating a mapping of `X -> SelectizeOption`, to make things a bit more palatable and cleaner.
+of creating a mapping of `X -> SelectizeOption`, to make things a bit more palatable and cleaner in rendering;
+```haxe
+class Person implements ISelectizeOption{
+	private var name:String;
+	private var surname:String;
+	private var id:Int;
+
+	public function new(a:String,b:String, id:Int){
+		name = a;
+		surname = b;
+		this.id = id;
+	}
+
+	public function selectize():SelectizeOption{
+		return new SelectizeOption('$name $surname', '${this.id}');
+	}
+	
+}
+class Webapp extends ReactComponent{
+
+  static public function main() 
+    ReactDOM.render(jsx('<$Webapp/>'), Browser.document.getElementById('app'));
+
+	private function getPeeps():List<Person>{
+		return [
+        new Person("Jonny", "john", 1),
+        new Person("Emma", "emma", 2),
+        new Person("Eddie", "eddie", 3),
+        new Person("Joel", "joel", 4),
+        new Person("Keith", "keith", 5)
+		];
+	}
+
+  override public function render(){
+    return jsx('<$Selectize ops=${getPeeps()}/>');
+  }
+}
+```
 
 ### Samples
 + [Simple List](./samples/01-simple-list/Webapp.hx)
@@ -30,10 +67,7 @@ of creating a mapping of `X -> SelectizeOption`, to make things a bit more palat
 
 ### Dependencies  
 + [haxe-react](https://github.com/massiveinteractive/haxe-react)    
-```bash
-haxelib install react
-```
-+ [reactjs](https://facebook.github.io/react/)
-+ [Selectize Dependencies](https://github.com/selectize/selectize.js#dependencies)
++ [react.js](https://facebook.github.io/react/)
++ [Selectize.js dependencies](https://github.com/selectize/selectize.js#dependencies)
 
 [Selectize.js homepage](http://selectize.github.io/selectize.js/)
