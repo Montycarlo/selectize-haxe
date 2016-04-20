@@ -33,11 +33,13 @@ class SelectizeOption implements ISelectizeOption{
 
 typedef SelectizeProps = {
 	var ops:Array<ISelectizeOption>;
+	@optional var formkey:String;
 	@optional var startEmpty:Bool;
 	@optional var create:Bool;
 	@optional var placeholder:String;
 	@optional var label:String;
-};
+}
+
 typedef SelectizeState = {};
 
 @final
@@ -52,10 +54,12 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 	or the samples directory to check for appropriate usage or copypasta.	
 	*/
 
+	private function getFormKey():String return (props.formkey == null ? props.label : props.formkey);
+
 	override public function render(){
 		var label = props.label != null ? jsx('<label className="control-label">${props.label}</label>') : null;
 		return jsx('
-		<div>
+		<div className="form-group" key=${getFormKey()}>
 			${label}
 			<select id="sel" placeholder=${props.placeholder} defaultValue="">
 				${createChildren()}
