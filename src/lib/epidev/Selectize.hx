@@ -53,15 +53,16 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 	There's a number of configurable properties, many of which are optional. Check the SelectizeProps typedef,
 	or the samples directory to check for appropriate usage or copypasta.	
 	*/
+	private var formkey(get,never):String;
 
-	private function getFormKey():String return (props.formkey == null ? props.label : props.formkey);
+	private function get_formkey():String return (props.formkey == null ? props.label : props.formkey);
 
 	override public function render(){
 		var label = props.label != null ? jsx('<label className="control-label">${props.label}</label>') : null;
 		return jsx('
-		<div className="form-group" key=${getFormKey()}>
+		<div className="form-group" key=${this.formkey}>
 			${label}
-			<select id="sel" placeholder=${props.placeholder} defaultValue="">
+			<select id=${this.formkey} placeholder=${props.placeholder} defaultValue="">
 				${createChildren()}
 			</select>
 		</div>
@@ -82,7 +83,7 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 	override public function componentDidMount(){
 		/* TODO: Fix this up, untyped should be eliminated as the JQuery lib should be present and
 		 the selectize extern should be created. #sel should also be patched.*/
-		untyped new JQuery("#sel").selectize({
+		untyped new JQuery('#${this.formkey}').selectize({
 			create:props.create
 		});
 	}
