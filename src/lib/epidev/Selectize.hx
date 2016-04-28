@@ -3,8 +3,6 @@ package epidev;
 import api.react.ReactComponent.ReactComponentOfPropsAndState;
 import api.react.ReactMacro.jsx;
 import jQuery.*;
-using Lambda;
-
 
 interface ISelectizeOption{
 	/*
@@ -38,6 +36,7 @@ typedef SelectizeProps = {
 	@optional var create:Bool;
 	@optional var placeholder:String;
 	@optional var label:String;
+	@optional var bind:String->Void;
 }
 
 typedef SelectizeState = {};
@@ -53,16 +52,14 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 	There's a number of configurable properties, many of which are optional. Check the SelectizeProps typedef,
 	or the samples directory to check for appropriate usage or copypasta.	
 	*/
-	private var formkey(get,never):String;
-
-	private function get_formkey():String return (props.formkey == null ? props.label : props.formkey);
+	private function getFormKey():String return (props.formkey == null ? props.label : props.formkey);
 
 	override public function render(){
 		var label = props.label != null ? jsx('<label className="control-label">${props.label}</label>') : null;
 		return jsx('
-		<div className="form-group" key=${this.formkey}>
+		<div className="form-group" key=${this.getFormKey()}>
 			${label}
-			<select id=${this.formkey} placeholder=${props.placeholder} defaultValue="">
+			<select id=${this.getFormKey()} placeholder=${props.placeholder} defaultValue="">
 				${createChildren()}
 			</select>
 		</div>
@@ -73,19 +70,22 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 		var ops = props.ops.map(function(x) return x.selectize());
 		if(props.startEmpty == true || props.placeholder != null) 
 			ops.unshift(new SelectizeOption('',''));
-
 		return [
 			for(o in ops) 
 				jsx('<option key=${o.val} value=${o.val}>${o.name}</option>')
 		];
 	}
 
+	private function onChange(v){
+		if(props.bind != null) props.bind(v.target.value);
+	}
+
 	override public function componentDidMount(){
 		/* TODO: Fix this up, untyped should be eliminated as the JQuery lib should be present and
 		 the selectize extern should be created. #sel should also be patched.*/
-		untyped new JQuery('#${this.formkey}').selectize({
+		untyped new JQuery('#${this.getFormKey()}').selectize({
 			create:props.create
-		});
+		}).on("change", onChange);
 	}
 
 }
