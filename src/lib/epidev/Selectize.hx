@@ -14,7 +14,7 @@ interface ISelectizeOption{
 	function selectize():SelectizeOption;
 }
 
-@final
+@:final
 class SelectizeOption implements ISelectizeOption{
 	/*
 	A object which represents an option in a Selectize box.
@@ -31,17 +31,18 @@ class SelectizeOption implements ISelectizeOption{
 
 typedef SelectizeProps = {
 	var ops:Array<ISelectizeOption>;
-	@optional var formkey:String;
-	@optional var startEmpty:Bool;
-	@optional var create:Bool;
-	@optional var placeholder:String;
-	@optional var label:String;
-	@optional var bind:String->Void;
+	@:optional var formkey:String;
+	@:optional var startEmpty:Bool;
+	@:optional var initialValue:Array<String>;
+	@:optional var create:Bool;
+	@:optional var placeholder:String;
+	@:optional var label:String;
+	@:optional var onChange:String->Void;
 }
 
 typedef SelectizeState = {};
 
-@final
+@:final
 class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeState>{
 	/*
 	Main class for this package. Responsible for interfacing with React and the actual selectize.js calls.
@@ -71,21 +72,26 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 		if(props.startEmpty == true || props.placeholder != null) 
 			ops.unshift(new SelectizeOption('',''));
 		return [
-			for(o in ops) 
-				jsx('<option key=${o.val} value=${o.val}>${o.name}</option>')
+			for(o in ops){
+				jsx('<option key=${o.val} value=${o.val}>${o.name}</option>');
+			}
 		];
 	}
 
 	private function onChange(v){
-		if(props.bind != null) props.bind(v.target.value);
+		if(props.onChange != null) props.onChange(v.target.value);
 	}
 
 	override public function componentDidMount(){
 		/* TODO: Fix this up, untyped should be eliminated as the JQuery lib should be present and
 		 the selectize extern should be created. #sel should also be patched.*/
-		untyped new JQuery('#${this.getFormKey()}').selectize({
+		var x = untyped new JQuery('#${this.getFormKey()}').selectize({
 			create:props.create
 		}).on("change", onChange);
+		
+		var s = x[0].selectize;
+		if(props.initialValue != null) s.addItem(props.initialValue, true);
+
 	}
 
 }
