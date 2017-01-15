@@ -31,7 +31,7 @@ class SelectizeOption implements ISelectizeOption{
 
 typedef SelectizeProps = {
 	var ops:Array<ISelectizeOption>;
-	@:optional var formkey:String;
+	var formkey:String;
 	@:optional var startEmpty:Bool;
 	@:optional var initialValue:Array<String>;
 	@:optional var create:Bool;
@@ -84,14 +84,28 @@ class Selectize extends ReactComponentOfPropsAndState<SelectizeProps, SelectizeS
 
 	override public function componentDidMount(){
 		/* TODO: Fix this up, untyped should be eliminated as the JQuery lib should be present and
-		 the selectize extern should be created. #sel should also be patched.*/
+		 the selectize extern should be created.*/
 		var x = untyped new JQuery('#${this.getFormKey()}').selectize({
 			create:props.create
 		}).on("change", onChange);
 		
 		var s = x[0].selectize;
 		if(props.initialValue != null) s.addItem(props.initialValue, true);
+	}
+  
+  override public function shouldComponentUpdate(nextProps:SelectizeProps, nextState:SelectizeState):Bool{
+    return nextProps.ops != props.ops || props.initialValue != nextProps.initialValue;
+  }
 
+  override public function componentDidUpdate(prevProps:SelectizeProps, prevState:SelectizeState):Void{
+    if(prevProps.ops == props.ops) return;
+		var x = untyped new JQuery('#${this.getFormKey()}')[0].selectize;
+    for(op in props.ops.map(function(x) return x.selectize())){
+        x.addOption({value:op.val, text:op.name});
+    }
+    x.refreshOptions(false);
+    if(props.initialValue != null)
+      for(item in props.initialValue) x.addItem(item,true);
 	}
 
 }

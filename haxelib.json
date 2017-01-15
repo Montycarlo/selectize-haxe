@@ -12,6 +12,6 @@
 	"classPath": "src/lib",
 	"dependencies": {
 		"jQueryExtern" : "2.0.5",
-		"react" : "*"
+		"react" : "0.3.0"
 	}
 }
